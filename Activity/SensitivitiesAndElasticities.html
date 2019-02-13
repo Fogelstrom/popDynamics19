@@ -177,7 +177,7 @@ Lambda &lt;- lambda(A)</code></pre>
 <p>Calculate <span class="math inline">\(\lambda\)</span> for the updated matrix A_seedBank, and store as e.g. <code>Lambda_seedBank</code>.</p>
 <pre class="r"><code>Lambda_seedBank &lt;- lambda(A_seedBank)</code></pre>
 <p>Now we can calculate the sensitivity for survival in the seed bank (matrix element a<sub>11</sub>) using the formula</p>
-<p><span class="math display">\[S_{ri} = \frac {\lambda_{1, new}-\lambda_{1, original}} {a_{new}-_{original}}= \frac {{\delta\lambda_1} {\delta a_ij}}\]</span></p>
+<p><span class="math display">\[S_{ij} = \frac {\lambda_{1, new}-\lambda_{1, original}} {a_{new}-a_{original}}= \frac {\delta\lambda_1} {\delta a_{ij}}\]</span></p>
 <pre class="r"><code>sensitivitySeedBank = (Lambda_seedBank - Lambda)/0.0001</code></pre>
 <p>Now, let’s calculate the sensitivity for seed production by tiny plants. <strong>Which matrix element represents seed production in the smallest size class (tiny)?</strong></p>
 <p>Compare the sensitivities for the different matrix elements</p>

@@ -71,7 +71,7 @@ Lambda_seedBank <- lambda(A_seedBank)
 
 Now we can calculate the sensitivity for survival in the seed bank (matrix element a~11~) using the formula
 
-$$S_{ri} = \frac {\lambda_{1, new}-\lambda_{1, original}} {a_{new}-_{original}}= \frac {{\delta\lambda_1} {\delta a_ij}}$$
+$$S_{ij} = \frac {\lambda_{1, new}-\lambda_{1, original}} {a_{new}-a_{original}}= \frac {\delta\lambda_1} {\delta a_{ij}}$$
 
 ```{r, eval = FALSE}
 sensitivitySeedBank = (Lambda_seedBank - Lambda)/0.0001
