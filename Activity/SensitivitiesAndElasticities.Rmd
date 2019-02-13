@@ -112,9 +112,12 @@ It can be difficult to compare the sensitivity of $\lambda$ to changes in fecund
 Sensitivity values are useful because they measure the absolute change in $\lambda$ in response to changes in vital rates. 
 Elasicity values can be interpreted as proportional sensitivities. They measure the relative change in $\lambda$ in response to changes in vital rates. Elasticities are useful because they are comparable (range between 0 and 1) and because impossible transitions get elasticities of zero.
 
-The formula for calculating the elasticity for a matrix element is  
+```{r include = FALSE}
+#The formula for calculating the elasticity for a matrix element is  
 
-$$e_{ij}=\frac{{\delta\lambda_1}/\lambda}{\delta a_{ij}/a_{ij}}$$
+#$$e_{ij}=\frac{{\delta\lambda_1}/\lambda}{\delta a_{ij}/a_{ij}}$$
+
+```
 
 Conveniently, there are functions in R that will allow us to calculate and plot the elasticites for all matrix elements at once. Let's use those functions and compare the elasticity values with our sensitivity values:  
 ```{r eval = FALSE}
