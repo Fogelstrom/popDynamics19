@@ -1,0 +1,19 @@
+---
+title: ""
+output:
+  rmarkdown::html_document:
+    theme: cosmo
+---
+
+##Welcome!
+
+Here you'll find code and instructions for the practical tasks for the session "Population dymamics" on the EERCV course. 
+
+[Exercise1: Matrix mutliplication](Activity/MatrixMultiplication.html)  
+
+[Exercise2: Sensitivities and elasticities](Activity/SensitivitiesAndElasticities.html)  
+
+[Exercise3: Population viability analysis](Activity/PopulationViabilityAnalysis.html)  
+
+
+This website was made using R Markdown. You can view the files for the webpage, the presentation and the example report [here](https://github.com/Fogelstrom/IntroToRMarkdown_BiostatIII_2018)

@@ -1,0 +1,138 @@
+---
+title: 'Exercise 6, Part2: Sensitivities & elasticities: Notes'
+output:
+  html_document:
+    code_folding: hide
+date: "20 February 2019"
+---
+
+###Which vital rates have the strongest influence on population growth rate, $\lambda$?
+
+
+
+####1. Sensitivity analysis  
+  
+In this exercise, we will study which vital rates/matrix elements have the strongest influence on population growth rate, $\lambda$.This can be accomplished in two ways; either by using manual perturbation methods, or by using analytical solutions. We will start with the manual perturbation method. 
+
+We will use sensitivity and elasticity analyses to evalutate different management options for the rare herb *Hudosonia montana*, the mountain golden heather. 
+
+
+<img src="https://upload.wikimedia.org/wikipedia/commons/thumb/a/a5/Hudsonia_montana.jpg/1024px-Hudsonia_montana.jpg" width="200" height="200" />
+
+*Hudsonia montana* [image url](https://upload.wikimedia.org/wikipedia/commons/thumb/a/a5/Hudsonia_montana.jpg/1024px-Hudsonia_montana.jpg)
+
+Matrices with vital rates from four years are included in the `popbio` package. Let's start with installing the package, loading the data and calculating a mean matrix (with mean vital rates) that we will use for the analyses.
+
+
+```{r, eval =FALSE}
+install.packages("popbio")
+library(popbio)
+data(hudsonia) #load dataset
+hudsonia # the hudsonia dataset contains four matrices with vital rates
+A <- mean(hudsonia) # calculate a mean matrix for the four years
+A # print the mean matrix
+image2(A) #plot the mean matrix
+```
+
+You will have to choose between two management regimes that would focus on  
+1)	increasing seed survival in the seed bank, or  
+2) increasing seed production in the smallest size class (tiny)  
+
+**what type of management regime should you choose?**
+
+To answer this question, we will perform a sensitivity analysis. The general question for a sensitivity analysis is how a very small change in a particular matrix element affects the population growth rate $\lambda$. You'll find that some matrix elements have a large impact on $\lambda$, whereas other matrix elements do not influence $\lambda$ significantly.  
+
+Calculate lambda for the matrix ...   
+  
+```{r eval = FALSE}
+# Lambda is a matematical property of the matrix and we can 
+# extract lambda by using the function 'lambda':
+Lambda <- lambda(A)
+```
+
+... and create a copy of the matrix that we can modify
+```{r eval = FALSE}
+A_seedBank <- A # create a copy of the mean matrix 
+```
+
+Which matrix element corresponds to survival of seeds in the seed bank?
+
+Add a small value, 0.0001, to the matrix element that is influenced by your management regime (update the survival of seeds in the seed bank)
+  
+```{r eval = FALSE}
+A_seedBank[1,1] <- A[1,1] + 0.0001 
+```
+  
+Calculate $\lambda$ for the updated matrix A_seedBank, and store as e.g. `Lambda_seedBank`.  
+  
+```{r eval = FALSE}
+Lambda_seedBank <- lambda(A_seedBank)
+```
+
+Now we can calculate the sensitivity for survival in the seed bank (matrix element a~11~) using the formula
+
+$$S_{ri} = \frac {\lambda_{1, new}-\lambda_{1, original}} {a_{new}-_{original}}= \frac {\delta\lambda_1} {\delta a_ij}$$
+
+```{r, eval = FALSE}
+sensitivitySeedBank = (Lambda_seedBank - Lambda)/0.0001
+```
+  
+Now, let's calculate the sensitivity for seed production by tiny plants.
+**Which matrix element represents seed production in the smallest size class (tiny)?**  
+
+```{r hide5, include= FALSE, eval = FALSE}
+A_seedProdTiny <- A
+A_seedProdTiny[1,3] <- A[1,3] + 0.0001 
+Lambda_seedProdTiny <- lambda(A_seedProdTiny)
+
+sensitivitySeedProdTiny <- (Lambda_seedProdTiny - Lambda) + 0.0001
+```
+  
+Compare the sensitivities for the different matrix elements
+
+```{r eval = FALSE}
+sensitivitySeedBank
+sensitivitySeedProdTiny
+```
+
+**So far, what is your conclusion regarding management regime?**  
+  
+***  
+
+####2. Elasticity values  
+
+Let's have a look at the sensitivities for all the matrix elements:  
+```{r eval = FALSE}
+image2(sensitivity(A))
+```
+Can you see any sensitivity values for impossible transitions?
+
+It can be difficult to compare the sensitivity of $\lambda$ to changes in fecundity (first row of the matri) and survival rates (all but first row) because they are measured on different scales (fecundity can vary over several orders of magnitude whereas survival can only take values between 0 and 1). 
+
+Sensitivity values are useful because they measure the absolute change in $\lambda$ in response to changes in vital rates. 
+Elasicity values can be interpreted as proportional sensitivities. They measure the relative change in $\lambda$ in response to changes in vital rates. Elasticities are useful because they are comparable (range between 0 and 1) and because impossible transitions get elasticities of zero.
+
+The formula for calculating the elasticity for a matrix element is  
+
+$$e_{ij}=\frac{{\delta\lambda_1}/\lambda}{{\delta a_{ij}}/a_{ij}}$$
+
+Conveniently, there are functions in R that will allow us to calculate and plot the elasticites for all matrix elements at once. Let's use those functions and compare the elasticity values with our sensitivity values:  
+```{r eval = FALSE}
+image2(elasticity(A))
+```
+
+
+**Do you reach the same conclusion regarding management regime based on elasticity values?**
+
+**Can you suggest other alternative management scenarios that would have (much) larger effects on population growth rate?**
+
+**Which life stage / age class would be the best target for management in this case?**
+
+*Note:*  
+
+* We must remember that analytical sensitivities and elasticities are evaluated at the stable-stage distribution. Results might be very different in real-life situations if the population is far from SSD.  
+  
+* Analytical solutions say nothing about how much vital rates change in nature or under management! As an example, even if adult survival has the largest elasticity, it might not be possible to alter adult survival with management. In such cases, manual perturbation methods are good complements to analytical methods.  
+  
+* Sensitivities are based on small change at the current vital rate / matrix element. The real relation between a vital rate and $\lambda$ is often non-linear. A large perturbation of a vital rate can in such cases lead to large deviations between the analytical solution and the "FALSE" relationship.
+

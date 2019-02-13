@@ -1,0 +1,5 @@
+name: "Emily C. Zabor"
+output_dir: "."
+output:
+  html_document:
+    theme: cosmo
