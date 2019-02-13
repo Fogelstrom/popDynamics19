@@ -71,7 +71,7 @@ Lambda_seedBank <- lambda(A_seedBank)
 
 Now we can calculate the sensitivity for survival in the seed bank (matrix element a~11~) using the formula
 
-$$S_{ij} = \frac {\lambda_{1, new}-\lambda_{1, original}} {a_{new}-a_{original}}= \frac {\delta\lambda_1} {\delta a_{ij}}$$
+$$S_{ij} = \frac {\lambda_{1, new}-\lambda_{1, original}} {a_{new}-a_{original}}= \frac{\delta\lambda_1} {\delta a_{ij}}$$
 
 ```{r, eval = FALSE}
 sensitivitySeedBank = (Lambda_seedBank - Lambda)/0.0001
@@ -114,7 +114,7 @@ Elasicity values can be interpreted as proportional sensitivities. They measure 
 
 The formula for calculating the elasticity for a matrix element is  
 
-$$e_{ij}=\frac{{\delta\lambda_1}/\lambda}{\delta a_{ij}/a_{ij}}$$
+$$e_{ij}=\frac{\delta\lambda_1/\lambda}{\delta a_{ij}/a_{ij}}$$
 
 Conveniently, there are functions in R that will allow us to calculate and plot the elasticites for all matrix elements at once. Let's use those functions and compare the elasticity values with our sensitivity values:  
 ```{r eval = FALSE}

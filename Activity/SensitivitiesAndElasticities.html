@@ -177,7 +177,7 @@ Lambda &lt;- lambda(A)</code></pre>
 <p>Calculate <span class="math inline">\(\lambda\)</span> for the updated matrix A_seedBank, and store as e.g. <code>Lambda_seedBank</code>.</p>
 <pre class="r"><code>Lambda_seedBank &lt;- lambda(A_seedBank)</code></pre>
 <p>Now we can calculate the sensitivity for survival in the seed bank (matrix element a<sub>11</sub>) using the formula</p>
-<p><span class="math display">\[S_{ij} = \frac {\lambda_{1, new}-\lambda_{1, original}} {a_{new}-a_{original}}= \frac {\delta\lambda_1} {\delta a_{ij}}\]</span></p>
+<p><span class="math display">\[S_{ij} = \frac {\lambda_{1, new}-\lambda_{1, original}} {a_{new}-a_{original}}= \frac{\delta\lambda_1} {\delta a_{ij}}\]</span></p>
 <pre class="r"><code>sensitivitySeedBank = (Lambda_seedBank - Lambda)/0.0001</code></pre>
 <p>Now, let’s calculate the sensitivity for seed production by tiny plants. <strong>Which matrix element represents seed production in the smallest size class (tiny)?</strong></p>
 <p>Compare the sensitivities for the different matrix elements</p>
@@ -194,7 +194,7 @@ sensitivitySeedProdTiny</code></pre>
 <p>It can be difficult to compare the sensitivity of <span class="math inline">\(\lambda\)</span> to changes in fecundity (first row of the matri) and survival rates (all but first row) because they are measured on different scales (fecundity can vary over several orders of magnitude whereas survival can only take values between 0 and 1).</p>
 <p>Sensitivity values are useful because they measure the absolute change in <span class="math inline">\(\lambda\)</span> in response to changes in vital rates. Elasicity values can be interpreted as proportional sensitivities. They measure the relative change in <span class="math inline">\(\lambda\)</span> in response to changes in vital rates. Elasticities are useful because they are comparable (range between 0 and 1) and because impossible transitions get elasticities of zero.</p>
 <p>The formula for calculating the elasticity for a matrix element is</p>
-<p><span class="math display">\[e_{ij}=\frac{{\delta\lambda_1}/\lambda}{\delta a_{ij}/a_{ij}}\]</span></p>
+<p><span class="math display">\[e_{ij}=\frac{\delta\lambda_1/\lambda}{\delta a_{ij}/a_{ij}}\]</span></p>
 <p>Conveniently, there are functions in R that will allow us to calculate and plot the elasticites for all matrix elements at once. Let’s use those functions and compare the elasticity values with our sensitivity values:</p>
 <pre class="r"><code>image2(elasticity(A))</code></pre>
 <p><strong>Do you reach the same conclusion regarding management regime based on elasticity values?</strong></p>
