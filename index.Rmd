@@ -9,7 +9,7 @@ output:
 
 Here you'll find code and instructions for the practical tasks for the session "Population dymamics" on the EERCV course. 
 
-[Exercise1: Matrix mutliplication](Activity/MatrixMultiplication.html)  
+[Exercise1: Population Projections](Activity/PopulationProjection.html)  
 
 [Exercise2: Sensitivities and elasticities](Activity/SensitivitiesAndElasticities.html)  
 
