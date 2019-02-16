@@ -1,0 +1,324 @@
+---
+title: "Population projection"
+output:
+  html_document:
+    code_folding: show
+date: "20 February 2019"
+---
+
+####Introduction  
+  
+We are now going to try different methods of predicting the future growth of populations and of estimating the (long term) growth rate, $\lambda$.  
+  
+First, you will need to install the package `popbio`:
+In RStudio: `Tools/Install packages` ...   
+In R console: `install.packages("popbio")`  
+
+We will project a population of the common frog *Rana temporaria* into the future. 
+
+<img src="https://upload.wikimedia.org/wikipedia/commons/thumb/3/39/European_Common_Frog_Rana_temporaria.jpg/1024px-European_Common_Frog_Rana_temporaria.jpg" width="200" height="200" />
+
+
+
+The equation we use to project a age/stage- or size structured population is: 
+
+$$ \mathbf{n}(t+1) = \mathbf{An}(t)$$
+  
+**n** is a vector with *k* values (*k* is the number of classes in the demographic model),  
+**A** is the projection matrix (Mills calls the projection or transition matrix **M**, you encounter both **A** and **M** frequently in the ecological literature).  
+Note that the **bold** type font for **n** and **A** always indicates that we are dealing with vectors and matrices.  
+  
+The projection matrix is a square matrix (equal number of rows and columns) of dimension *k* $\times$ *k*. A projection matrix must always have the same number of rows and columns as the number of classes in the demographic model!  
+  
+The projection matrix **A** is multiplied with a vector **n**, which contains the number of individuals in each respective stage. 
+  
+This is the projection matrix, **A**, for the common frog: 
+
+$$\mathbf{A} = \left[\begin{array}
+{rrr}
+0      & F_2    & F_3  \\
+S_{21} & S_{22} & 0 \\
+0      & S_{32} & S_{33} \\
+\end{array}\right]
+= \left[\begin{array}
+{rrr}
+0     & 52   & 279.5  \\
+0.019 & 0.25 & 0 \\
+0     & 0.08 & 0.43 \\
+\end{array}\right]$$ 
+
+(*F* for fecundity and *S* for probability of survival to the next year)
+
+This species has three stages;  
+  
+- Pre-juvenile (or first year, which involves egg, tadpole and over-wintering metamorph)  
+- Juvenile (next 2 years)  
+- Adult 
+
+And this is the population vector, **n**: 
+
+$$\mathbf{n} = \left[\begin{array}
+{r}
+70 \\
+20 \\
+10 \\
+\end{array}\right]$$
+
+
+When we multiply a matrix with a vector, the result is a vector with the same dimensions as the original vector (and not a single value). This particular example yields: 
+
+$$\mathbf{n}(t+1) = \left[\begin{array}
+{rrrrrrrrrrr}
+0.000 \times 70 + 52.0 \times 20 + 279.5 \times 10  \\
+0.019 \times 70 + 0.25 \times 20 + 0.000 \times 10 \\
+0.000 \times 70 + 0.08 \times 20 + 0.430  \times 10 \\
+\end{array}\right]$$ 
+
+
+Now, enter the projection matrix into R. 
+
+```{r, eval = FALSE}
+#create an empty matrix and specify the dimensions (3 * 3) 
+#The arguments nrow and ncol defines the number of rows and columns.
+A <-matrix(nrow=3, ncol=3) 
+
+#Add fecundity measures:
+A[1,] <- c(0, 52, 279.5) #fill first row
+
+A # inspect your matrix
+
+#add survival probabilites:
+A[2,] <- c(0.019, 0.25, 0) #fill second row
+A[3,] <- c(0, 0.08, 0.43)  #fill third row
+
+A # inspect your matrix
+```
+  
+Create a vector with population sizes, `n` 
+
+```{r, eval = FALSE}
+n0 <-c(70, 20, 10)
+
+n0 #inspect the population vector
+
+```
+
+Matrix multiplication is carried out with the operator `%*%`: 
+
+```{r, eval = FALSE}
+A %*% n0 # This gives us population size at time t+1 
+```
+  
+**Note**: Using the ordinary multiplication operator or changing the order of **A** and **n** will give different results. Make sure you use the operator `%*%` and that you right multiply **A** and **n**!
+
+Make sure that you understand what the different values represent:  
+
+a) What is in the first row? 
+
+```{r, include = FALSE, eval = FALSE}
+# Reproductive contribution of class j to the next time-step. 
+# I.e. fecundity + advancement of newborns to the next time step.
+
+```
+
+b) Which values are on the diagonal of the matrix?  
+
+```{r, include = FALSE, eval = FALSE}
+#Proportion of individuals that survive to 
+#still be in the same stage in the next year
+```
+
+
+c) What is the subdiagonal? 
+```{r, include = FALSE, eval = FALSE}
+#Proportion of individuals that survive 
+#and move to the next time step in the next year
+```
+
+
+A matrix element is usually denoted by a, and the subscripts are usually ~i~ for row and ~j~ for column. 
+Thus, the matrix element for adult survival, 0.43, is referenced as a~33~. 
+
+Next, simulate how this population changes over time in a stable environment according to the equation **n**(t+1) = **An**(t).  
+  
+
+```{r, eval = FALSE}
+
+n1 <- A %*% n0 	# This gives n(t=1) 
+n1 				      # Print n to screen 
+n2 <- A %*% n1 		# Repeat the multiplication, this gives n(t=2) 			
+# note that this will overwrite the original vector n 
+
+n2 
+sum(n2) 	# To get total number of individuals 
+
+# To view the proportional distribution among classes: 
+n0/sum(n2) 	
+```
+  
+Now, we will **predict the future growth** of this population and **estimate the (long term) growth rate $\lambda$** by calculating $\lambda$ for each time step.
+
+At some point $\lambda$ and the proportion of individuals in each life-stage will stabilize. This is called the **stable stage distribution**. Will find out how long it takes to reach the stable stage distribution. (We will consider $\lambda$ stable when the first four decimal places have stabilised (i.e. are unchanged among iterations)). 
+
+We can do this by repeating the commands given above over and over but it's more efficient to create a for-loop that that does the calculations automatically. Let's project the population 30 years into the future:
+
+```{r eval = FALSE} 
+#specify the number of years that we want to project into the future (the number of iterations). 
+years <- 30 
+
+#Set up an empty matrix to hold the calculations (called e.g. `N`) where rows are years and columns are classes. For each time step, we'll send the results from the matrix-population vector multiplication to the corresponding row in the result matrix N. 
+
+N <- matrix (nrow=years+1, ncol=ncol(A)) 
+
+#We have to add an extra row (years +1) for the initial year.
+
+# Send initial pop size vector to first row in matrix N 
+N[1,] <- n0 
+
+#Build a for-loop for repeated matrix multiplication
+#repeat population projection for 'years' number of time steps: 
+
+for (t in 1:years) { N[t+1,] = A %*% N[t,] } 
+
+#Notice how the code resembles the basic projection equation n(t+1) = An(t) 
+```
+
+We have projected the population sizes for each life-stage. To determine when the stable stage distribution is reached we need to calculate lambda and to calculate lambda we need the total population size for each time step.
+
+```{r eval = FALSE}
+totN <- rowSums(N) #total population size for each time step
+```
+
+Calculate $\lambda$ for each time step ($\lambda = N_{t+1}/N_t$):
+```{r eval = FALSE}
+Lambdas = totN[2:31] / totN[1:30] 
+```
+
+To find out what the stable stage distribution looks like, calculate the proportion of individuals in each class for each time step:
+
+```{r eval = FALSE}
+propN = N/totN
+```
+
+Let's tie our calculations togehter in a table:  
+
+```{r eval = FALSE}
+table1 <- cbind(years, propN[2:31,], totN[2:31], Lambdas)
+colnames(table1) = c("year", "prop pre-\njuveniles", "prop \njuveniles", 
+                     "prop adults", "total N", "lambda")
+knitr::kable(table1, digits = 4)
+```
+
+* How long does it take to reach the stable stage distribution?  
+
+* What is the stable stage distribution (what proportion of the population are in the three different life-stages)?  
+
+* What will be the size of the population in 20 years?  
+
+Plot change in lambda over time for each time step t  
+
+```{r eval = FALSE}
+ 
+#Plot Change in lambda over time for each time t 
+#(note years-1, since the number of time steps is t-1!). 
+plot(0:(years-1), Lambdas, xlab="Time(t)", ylab=expression(lambda), las=1, type="b", ylim=c(0.5, 1.5)) 
+
+#ylim is used to adjust y-limits for visibility 
+```
+
+  
+**Plot total population size over time**, as well as the number of individuals in each class over time:
+
+```{r eval = FALSE}
+# Plot each class as a separate line on natural scale 
+matplot(0:years, N, xlab="Time (t)", ylab="Population size", font.lab=2,type="l",lwd=2)  
+```
+
+Now that you've done all this hard work it's time for me to tell you that we can derive growth rate $\lambda$, stable stage distribution and reproductive values directly from the matrix, without doing the projection (the `for-loop`). This is because $\lambda$, stable stage distribution and reproductive values are all mathematical properties of the transition matrix (Caswell 2001). 
+- **The dominant eigenvalue equals $\lambda$**, the long-term population growth rate  
+- **The right eigenvector (w)** of the dominant eigenvalue is a vector that provides the stable stage distribution.  
+- **The left eigenvector (v)** of the dominant eigenvalue is a vector that provides reproductive values. 
+ 
+We can do a so called `eigen analysis` using the `popbio` package:
+
+```{r, eval = FALSE}
+library(popbio) #Load package 
+eigen.analysis(A) 
+```
+
+or just extract the parameters that we're after directly:
+
+```{r}
+lambda(A)
+stable.stage(A) 
+reproductive.value(A) 
+```
+
+
+Compare lambda with your results from the iterations. Are they the same?  
+
+It is important to remember that lambda and the stable stage distribution give the expected, long-term (asymptotic) dynamics of the system. However, a population can show very different (short-term) dynamics depending on the distribution of individuals in the initial start vector at t=0. 
+
+Projection can be done with the `pop.projection function`, a very useful function. Try this and interpret the output (you will probably recognise the results from your own calculations!):
+
+```{r, eval = FALSE}
+N <-pop.projection(A=A, n=n0, iterations=30) 
+N 
+```
+
+
+Now, let's investigate how changing the population vector affects the short term dynamics in the frog population:
+
+In the first case, we start with 100 individuals distributed over the different life-stages according to the stable stage distribution: 
+
+```{r, eval = FALSE}
+n0_1 <- stable.stage(A)*100 
+n0_1
+```
+
+
+In the second case, we start with 100 individuals, all adults. 
+```{r, eval = FALSE}
+n0_2 <- c(0,0,100) 
+n0_2
+```
+
+
+In the third case, start with 100 individuals, all pre-juveniles. 
+```{r, eval = FALSE}
+n0_3 <- c(100,0,0) 
+n0_3
+```
+
+Track each scenario for 14 years (iterations=15). 
+ 
+```{r, eval = FALSE}
+N1 <- pop.projection(A, n0_1, 14+1) 
+N1$pop.sizes 
+
+N2 <- pop.projection(A, n0_2, 14+1) 
+N2$pop.sizes 
+
+N3 <- pop.projection(A, n0_3, 14+1) 
+N3$pop.sizes
+```
+
+How much do final population sizes differ between scenarios?
+Why do you think that the population sizes differ so much? (hint: reproductive values...).  
+
+If you would attempt a reintroduction program, would you release juveniles or adults?  
+  
+***
+
+#####References  
+This exercise was developed by Peter Hellstr?m (dept. of Zoology) and modified by EF
+
+Caswell, H. 2001. Matrix Population Models: Construction, Analysis, and Interpretation. 2nd 
+edition. Sinauer Associates, Sunderland, MA. 
+
+Mills, L. S. 2013. Conservation of Wildlife Populations. Demography, Genetics, and 
+Management. 2nd edition. John Wiley & Sons, Chichester, West Sussex, UK. 
+
+Morris, W. F., and D. F. Doak. 2002. Quantitative Conservation Biology: Theory and Practice of Population Viability Analysis. Sinauer Associates, Sunderland, MA. 
+
+Stevens, M. H. H. 2009. A Primer of Ecology with R. Springer Science, New York.
