@@ -8,13 +8,13 @@ date: "20 February 2019"
 
 ####Introduction  
   
-We are now going to try different methods of predicting the future growth of populations and of estimating the (long term) growth rate, $\lambda$.  
+We are now going to try different methods of predicting the future growth and of estimating the (long term) growth rate, $\lambda$. 
   
 First, you will need to install the package `popbio`:
 In RStudio: `Tools/Install packages` ...   
 In R console: `install.packages("popbio")`  
 
-We will project a population of the common frog *Rana temporaria* into the future. 
+We will project future populations and
 
 <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/3/39/European_Common_Frog_Rana_temporaria.jpg/1024px-European_Common_Frog_Rana_temporaria.jpg" width="200" height="200" />
 

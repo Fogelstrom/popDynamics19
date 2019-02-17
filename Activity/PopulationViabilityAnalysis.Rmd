@@ -1,28 +1,177 @@
 ---
 title: "Population viability analysis"
-output: html_document
+output:
+  html_document:
+    code_folding: hide
+date: "20 February 2019"
 ---
 
-```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = TRUE)
+We'll continue to work with *Hudsonia montana* in `popbio`.
+*H. montana* is endemic to North Carolina, where it is found in fragmented populations on mountain slopes. Only seven populations are known and it is listed as threatened under the US Endangered Species Act due to its rarity. The main anthropogentic threat is that the populations are facing is disturbance from hikers and mountain climbers. 
+You will estimate deterministic and stochastic growth rates for the species, and then go on to estimate future population sizes and the probability of extinction under different scenarios.
+
+####1. Deterministic analysis: basic non-stochastic PVA
+
+```{r, eval=FALSE}
+library(popbio)
+data(hudsonia)
 ```
 
-## R Markdown
-
-This is an R Markdown document. Markdown is a simple formatting syntax for authoring HTML, PDF, and MS Word documents. For more details on using R Markdown see <http://rmarkdown.rstudio.com>.
-
-When you click the **Knit** button a document will be generated that includes both content as well as the output of any embedded R code chunks within the document. You can embed an R code chunk like this:
-
-```{r cars}
-summary(cars)
+Inspect the matrices, they contain observed vital rates from four years, 1985-1988:
+```{r, eval=FALSE}
+hudsonia
 ```
 
-## Including Plots
-
-You can also embed plots, for example:
-
-```{r pressure, echo=FALSE}
-plot(pressure)
+Create a mean projection matrix and take a look at it:
+```{r, eval=FALSE}
+A <- mean(hudsonia)
+A
 ```
 
-Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.
+Load the population vector (containing the number of individuals in each class at the start of the projection). We will use the following population sizes:  
+
+```{r, eval=FALSE}
+n0 <- c(4264, 3, 30, 16, 25, 5)
+```
+
+Use the function `pop.projection` to estimate population growth rates. Store the output as `detProj` 
+```{r, eval=FALSE}
+detProj <- pop.projection(A, n0, iterations=20+1)
+detProj
+```
+
+
+As you might remember, this function will start with your mean matrix and project it for 20 time steps (`iterations = 20+1`), i.e. it will project the equation **n**(t+1) = **An**(t) 20 times.
+
+
+a) How would you describe the estimated development of the population over 20 years?   
+
+Write down your deterministic approximation of lambda so that you can compare it to the results in the next part of this exercise.  
+  
+####2a. Stochastic analyses  
+  
+Estimate the stochastic growth rate ($\lambda_S$) using the `stoch.growth.rate` function. Store the output as e.g `stochProj`  
+  
+Use all the annual matrices (i.e. the hudsonia data, not the mean matrix). The function will make a random draw with replacement for (in this case) 20 time steps.
+```{r, eval=FALSE}
+stochProj <- stoch.growth.rate(hudsonia, maxt = 20+1)
+
+#Look at the output that you've stored in StochProj:
+
+stochProj
+```
+
+
+`approx` and `sim` are both approximations of $\lambda_S$, estimated with different methods (the first using an analytical method and the second using simulations). The two approximations differ from the deterministic growth rate from the previous part of the exercise.  
+  
+What you have estimated is actually $\overline{r}$, the mean exponential growth rate (mean *r*). The stochastic growth rate is equivalent to mean exponential growth rate, $\overline{r}$, and we can use this to convert our approximations into $\lambda_S$.  
+  
+$r = ln(\lambda)$  
+And that $\lambda = e^{r}$
+
+In R, we can convert $\overline{r}$ to $\lambda_S$ like this:
+
+```{r, eval=FALSE}
+exp(stochProj$approx)
+exp(stochProj$sim)
+```
+
+b) Compare your stochastic growth rates with the deterministic growth rate from the previous part of the exercise, do they look the same?  
+  
+c) Compare your stochastic growth rates with each other, do they look the same?  
+  
+d) What happens if you run this part of the exercise again a few times, and why?  
+
+If you look at the growth rates for the different matrices in hudsonia...
+```{r, eval=FALSE}
+lambda(hudsonia$A85)
+lambda(hudsonia$A86)
+lambda(hudsonia$A87)
+lambda(hudsonia$A88)
+```
+... you will see that the projection matrix for 1987 is associated with the lowest growth rate.
+
+Let's say that the low growth rate was due to increased disturbance (e.g trampling) by mountain climbers in that year. What would happen to our population if there was an increase in years when a lot of plants got trampled by tourists?
+  
+In the hudsonia data, the third matrix contains vital rates for year 1987. Start by creating a vector with weights:
+```{r, eval=FALSE}
+yearweight1 <- c(1, 1, 2, 1)
+```
+  
+Use the `stoch.projection` function to simulate population sizes for 20 years (`tmax`) and repeat it 1000 times (`nreps`). In this function, by applying a weight to the year 1987, you will increase the probability that the vital rates from the 1987 matrix will be used by the function to predict future population sizes.
+
+```{r, eval=FALSE}
+WeightProj1 <- stoch.projection(hudsonia, n0, tmax = 20+1,
+prob = yearweight1, nreps = 1000)
+
+```
+  
+Compare with a scenario when less disturbance occurred
+```{r, eval=FALSE}
+yearweight2 <- c(1, 1, 0, 1) # vector with weights
+
+#We set the weight for the third matrix (1987) to 0
+#i.e. we state that we don't want the  stoch.pop projection to draw
+#our negative growth rate from 1987
+
+WeightProj2 <- stoch.projection(hudsonia, n0, tmax = 20+1, prob = yearweight2,nreps = 1000)
+```
+  
+Now you can compare the simulated population sizes graphically:
+```{r, eval=FALSE}
+
+par(mfrow = c(2, 1))
+
+hist(apply(WeightProj1, 1, sum), col = "blue", ylim=c(0,400), xlim=c(0,6000)
+     , xlab = "", main = "More disturbance")
+abline(v = (sum(n0)), lty = 3)
+#Use the abline command to put a line at the starting population size for reference
+
+hist(apply(WeightProj2, 1, sum), col = "green3", ylim=c(0,400), xlim=c(0,6000)
+     , xlab = "", main = "Less disturbance")
+abline(v = (sum(n0)), lty = 3)
+
+#The y axis represents frequency of final population size at tmax.
+```
+
+  
+  
+e) What are your conclusions about the effects of disturbance? How would an increase in years with a lot of tourism, for example, affect the viability of the population?  
+  
+####3. Quasi-extinction  
+  
+Another approach to modelling populations is to estimate the probability of quasi-extinction.  
+  
+f) Why are we using a quasi-extinction threshold rather than estimating the probability of actual extinction (n=0)?  
+  
+You can use the `stoch.quasi.ext` function to estimate the probability of the population size falling under a quasi-extinction threshold over time.  
+First, decide on a quasi-extinction threshold. In the code below, I have used 2000 individuals as an arbitrary threshold (`Nx=2000`). Let the `stoch.quasi.ext` function project population sizes 20 years to the future (`tmax = 20+1`) and calculate the cumulative probability of quasi-extinction 10 times (`maxruns = 10`). Each probability density function will be estimated from 500 simulations of population sizes (`nreps = 500`) over 20 time steps.
+
+```{r, eval=FALSE}
+obsdata <- stoch.quasi.ext(hudsonia, n0, prob = NULL, Nx = 2000,
+                           tmax = 20+1, maxruns = 10, nreps = 500, verbose = FALSE)
+```
+
+Plot your output (probability density functions of quasi-extinction over time):
+```{r, eval=FALSE}
+
+par(mfrow = c(1, 1))
+matplot(obsdata, ylab = "Quasi-extinction probability", type = "l", ylim=c(0,1), lty = 1
+        , col = rainbow(10), las = 1, main = "Observed Data", xlab = "Years")
+
+```
+
+  
+g) Do you find it likely that the population size will fall under the quasi-extinction threshold in the next 20  years?  
+  
+You can also add weights by using the `prob` argument, e.g. for year 1987 when we assume that population growth rate decreased due to disturbance by humans:
+```{r, eval=FALSE}
+weightsdata <- stoch.quasi.ext(hudsonia, n0, prob = c(1, 1, 2, 1), Nx = 2000, tmax = 20+1
+                               , maxruns = 10, nreps = 500,verbose = FALSE)
+
+matplot(weightsdata, ylab = "Quasi-extinction probability", type = "l",ylim=c(0,1), lty = 1
+        , col = rainbow(10), las = 1, main = "Disturbance", xlab = "Years")
+```
+
+
+h) How would an increase mountain tourism affect the probability of extinction (assuming that increased tourism means increased disturbance, and decreased growth rate, for the *H. montanta* populations)?  

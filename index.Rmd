@@ -7,13 +7,14 @@ output:
 
 ##Welcome!
 
-Here you'll find code and instructions for the practical tasks for the session "Population dymamics" on the EERCV course. 
+Here's code and instructions for the practical tasks for the session "Population dymamics" on the EERCV course. 
 
-[Exercise1: Population Projections](Activity/PopulationProjection.html)  
+[Population Projections](Activity/PopulationProjection.html)  
 
-[Exercise2: Sensitivities and elasticities](Activity/SensitivitiesAndElasticities.html)  
+[Sensitivities and elasticities](Activity/SensitivitiesAndElasticities.html)  
 
-[Exercise3: Population viability analysis](Activity/PopulationViabilityAnalysis.html)  
+[Calculate stochastic growth rate](Activity/stochasticGrowthRate.html)  
 
+[Population viability analysis (PVA)](Activity/PopulationViabilityAnalysis.html)  
 
-This website was made using R Markdown. You can view the files for the webpage, the presentation and the example report [here](https://github.com/Fogelstrom/IntroToRMarkdown_BiostatIII_2018)
+If you want an extra exercise, try performing a [count-based PVA for the Yellowstone grizzly population](http://www.montana.edu/screel/teaching/bioe-440r-521/course-outline/count-based-PVA-grizzly-data.R)

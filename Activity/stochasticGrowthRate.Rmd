@@ -1,0 +1,39 @@
+---
+title: "Estimating stochastic growth rate"
+output:
+  html_document:
+    code_folding: hide
+date: "20 February 2019"
+---
+
+Natural populations almost always experience some kind of stochasticity. Let's take that into account.
+
+The stochastic growth rate, $\lambda_S$ is the geometric mean of $\lambda$.  
+If we would use an average lambda for a population experiencing stochasticity, a few large values of lambda could result in us overestimating the actual mean growth rate of the population.  
+  
+Take a look at this vector with made up lambdas. Most growth rates are close to 1 except for the last one:
+```{r, eval=FALSE}
+fake.lambdas <- c(0.9, 1.1, 0.9, 1.1, 0.9, 1.1, 0.9, 1.1, 0.9, 2) #enter fake lambas in r
+```
+
+Calculate the arithmetic mean and store it as `lambda_a`:
+```{r, eval=FALSE}
+lambda_a <- mean(fake.lambdas)
+```
+
+Then calculate the geometric mean
+```{r, eval=FALSE}
+rvals <- log(fake.lambdas) #ln-transform your lambda values --> continuous r values
+r_bar <- mean(rvals) #store the average r value, r_bar
+lambda_s <- exp(r_bar) # store your geometric mean (stochastic) lambda
+```
+  
+And compare the arithmetic and geometric mean lambda:
+```{r, eval=FALSE}
+lambda_a
+lambda_s
+```
+As you can see, the geometric mean is smaller than the arithmetic mean.  
+Imagine that you study a population for a number of years. In one or a few years, stochastic events affect population growth rate to be larger or smaller than normal. If you use the average population growth rate for those years to project future population sizes, you might overestimate, or underestimate, those population sizes.   
+The geometric mean predicts the *median* of possible growth rates at time *t*, i.e. the most common possible growth rates, rather than the arithmetic average.  
+  
