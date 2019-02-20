@@ -9,12 +9,9 @@ date: "20 February 2019"
 ###Which vital rates have the strongest influence on population growth rate, $\lambda$?
 
 
-
 ####1. Sensitivity analysis  
   
 In this exercise, we will study which vital rates/matrix elements have the strongest influence on population growth rate, $\lambda$.This can be accomplished in two ways; either by using manual perturbation methods, or by using analytical solutions. We will start with the manual perturbation method. 
-
-We will use sensitivity and elasticity analyses to evalutate different management options for the rare and threatened plant mountain golden heather *Hudsonia montana*, which is endemic to North Carolina in USA (from Table 6.7 in Morris & Doak (2002)).  
 
 <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/a/a5/Hudsonia_montana.jpg/1024px-Hudsonia_montana.jpg" width="200" height="200" />
 
@@ -34,15 +31,15 @@ image2(A) #plot the mean matrix
 ```
 
 
-Study the mean matrix and try to understand the life cycle and what the different values mean. This matrix is more complicated than the frog matrix used previously, since plants like mountain golden heather can regress (shrink) in size. Use the mean matrix to project the mountain golden heather population. 
+Study the mean matrix and try to understand the life cycle and what the different values mean. Use the mean matrix to project the mountain golden heather population. 
 
 
-You will have to choose between two management regimes that would focus on  
-1)	increasing seed survival in the seed bank, or  
-2) increasing seed production in the smallest size class (tiny)  
-**what type of management regime should you choose?**
+Your task is to perform a sensitivity analysis and to use your results to choose one og the following management regimes:  
 
-To answer this question, we will perform a sensitivity analysis. The general question for a sensitivity analysis is how a very small change in a particular matrix element affects the population growth rate $\lambda$. You'll find that some matrix elements have a large impact on $\lambda$, whereas other matrix elements do not influence $\lambda$ significantly.  
+1) Focus on increasing seed survival in the seed bank, or  
+2) Focus on increasing seed production in the smallest size class (tiny)  
+
+The general question for a sensitivity analysis is how a very small change in a particular matrix element affects the population growth rate $\lambda$. You'll find that some matrix elements have a large impact on $\lambda$, whereas other matrix elements do not influence $\lambda$ significantly.  
 
 Calculate lambda for the matrix ...   
   
@@ -112,7 +109,7 @@ Can you see any sensitivity values for impossible transitions?
 It can be difficult to compare the sensitivity of $\lambda$ to changes in fecundity (first row of the matri) and survival rates (all but first row) because they are measured on different scales (fecundity can vary over several orders of magnitude whereas survival can only take values between 0 and 1). 
 
 Sensitivity values are useful because they measure the absolute change in $\lambda$ in response to changes in vital rates. 
-Elasicity values can be interpreted as proportional sensitivities. They measure the relative change in $\lambda$ in response to changes in vital rates. Elasticities are useful because they are comparable (range between 0 and 1) and because impossible transitions get elasticities of zero.
+Elasicity values can be interpreted as proportional sensitivities. They measure the relative change in $\lambda$ in response to changes in vital rates. Elasticities are useful because they are comparable among vital rates (range between 0 and 1) and because impossible transitions get elasticities of zero.
 
 The formula for calculating the elasticity for a matrix element is  
 

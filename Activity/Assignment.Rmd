@@ -1,0 +1,98 @@
+---
+title: "Assignment: Population dynamics"
+output:
+  html_document:
+    code_folding: show
+date: "20 February 2019"
+---
+
+Remember the frog matrix? Your first task is to investigate how changing the population vector affects the short term dynamics in the frog population:
+
+
+```{r, eval = TRUE}
+library(popbio) #load popbio package
+
+#create an empty matrix and specify the dimensions (3 * 3) 
+#The arguments nrow and ncol defines the number of rows and columns.
+A <-matrix(nrow=3, ncol=3) 
+
+#Add fecundity measures:
+A[1,] <- c(0, 52, 279.5) #fill first row
+#add survival probabilites:
+A[2,] <- c(0.019, 0.25, 0) #fill second row
+A[3,] <- c(0, 0.08, 0.43)  #fill third row
+
+A # inspect your matrix
+```
+
+In the first case, we start with 100 individuals distributed over the different life-stages according to the stable stage distribution: 
+
+```{r, eval = TRUE}
+n0_1 <- stable.stage(A)*100 
+n0_1
+```
+
+
+In the second case, we start with 100 individuals, all adults. 
+```{r, eval = TRUE}
+n0_2 <- c(0,0,100) 
+n0_2
+```
+
+
+In the third case, start with 100 individuals, all pre-juveniles. 
+```{r, eval = TRUE}
+n0_3 <- c(100,0,0) 
+n0_3
+```
+
+Track each scenario for 14 years (iterations=15). 
+ 
+```{r, eval = TRUE}
+N1 <- pop.projection(A, n0_1, 14+1) 
+N1$pop.sizes 
+
+N2 <- pop.projection(A, n0_2, 14+1) 
+N2$pop.sizes 
+
+N3 <- pop.projection(A, n0_3, 14+1) 
+N3$pop.sizes
+```
+
+a) Why do you think that the population sizes differ so much?  
+
+b) If you would attempt a reintroduction program, would you release juveniles or adults?  
+
+
+Your second task is to calculate the growth rate and sensitivities for a population of orcas. Orcas have expanded northwards in response to climate change. This is expected to result in trophic cascades in their new foraging areas because they feed on other marine mammals.
+
+Load the whale matrix from popbio:
+```{r, eval = TRUE}
+library(popbio) #load popbio package
+data(whale)
+whale
+```
+
+Calculate the long term deterministic lambda for the population:  
+
+```{r}
+lambda(whale)
+```
+
+c) What does this say about future population sizes?
+
+d) Do you trust that using this measure would result in accurate estimates of future population sizes of this natural orca population? Why/why not? 
+
+Calculate sensitivities and elasticities for the transitions in the whale matrix. Plot the resulting sensitivity and elasticity matrices.  
+
+```{r, eval = TRUE}
+image2(sensitivity(whale))
+```
+```{r, eval = TRUE}
+image2(elasticity(whale))
+```
+
+
+e) What do these values say about the importance of the different transitions in the matrix for the population growth rate? What would be the implications for management?
+
+

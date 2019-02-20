@@ -8,13 +8,14 @@ date: "20 February 2019"
 
 ####Introduction  
   
-We are now going to try different methods of predicting the future growth and of estimating the (long term) growth rate, $\lambda$. 
+We are now going to try different methods of predicting the future growth and of estimating the (long term) growth rate, $\lambda$ for the common frog.  
+
   
-First, you will need to install the package `popbio`:
+First, you will need to install the package `popbio`:  
+
 In RStudio: `Tools/Install packages` ...   
 In R console: `install.packages("popbio")`  
 
-We will project future populations and
 
 <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/3/39/European_Common_Frog_Rana_temporaria.jpg/1024px-European_Common_Frog_Rana_temporaria.jpg" width="200" height="200" />
 
@@ -248,7 +249,7 @@ eigen.analysis(A)
 
 or just extract the parameters that we're after directly:
 
-```{r}
+```{r eval = FALSE}
 lambda(A)
 stable.stage(A) 
 reproductive.value(A) 
@@ -267,52 +268,8 @@ N
 ```
 
 
-Now, let's investigate how changing the population vector affects the short term dynamics in the frog population:
-
-In the first case, we start with 100 individuals distributed over the different life-stages according to the stable stage distribution: 
-
-```{r, eval = FALSE}
-n0_1 <- stable.stage(A)*100 
-n0_1
-```
-
-
-In the second case, we start with 100 individuals, all adults. 
-```{r, eval = FALSE}
-n0_2 <- c(0,0,100) 
-n0_2
-```
-
-
-In the third case, start with 100 individuals, all pre-juveniles. 
-```{r, eval = FALSE}
-n0_3 <- c(100,0,0) 
-n0_3
-```
-
-Track each scenario for 14 years (iterations=15). 
- 
-```{r, eval = FALSE}
-N1 <- pop.projection(A, n0_1, 14+1) 
-N1$pop.sizes 
-
-N2 <- pop.projection(A, n0_2, 14+1) 
-N2$pop.sizes 
-
-N3 <- pop.projection(A, n0_3, 14+1) 
-N3$pop.sizes
-```
-
-How much do final population sizes differ between scenarios?
-Why do you think that the population sizes differ so much? (hint: reproductive values...).  
-
-If you would attempt a reintroduction program, would you release juveniles or adults?  
-  
-***
 
 #####References  
-This exercise was developed by Peter Hellstr?m (dept. of Zoology) and modified by EF
-
 Caswell, H. 2001. Matrix Population Models: Construction, Analysis, and Interpretation. 2nd 
 edition. Sinauer Associates, Sunderland, MA. 
 

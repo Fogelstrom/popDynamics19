@@ -117,7 +117,7 @@ $(document).ready(function () {
 </style>
 <script>
 $(document).ready(function () {
-  window.initializeCodeFolding("hide" === "show");
+  window.initializeCodeFolding("show" === "show");
 });
 </script>
 
@@ -144,7 +144,6 @@ $(document).ready(function () {
 </div>
 
 
-<p>We’ll continue to work with <em>Hudsonia montana</em> in <code>popbio</code>. <em>H. montana</em> is endemic to North Carolina, where it is found in fragmented populations on mountain slopes. Only seven populations are known and it is listed as threatened under the US Endangered Species Act due to its rarity. The main anthropogentic threat is that the populations are facing is disturbance from hikers and mountain climbers. You will estimate deterministic and stochastic growth rates for the species, and then go on to estimate future population sizes and the probability of extinction under different scenarios.</p>
 <div id="deterministic-analysis-basic-non-stochastic-pva" class="section level4">
 <h4>1. Deterministic analysis: basic non-stochastic PVA</h4>
 <pre class="r"><code>library(popbio)
@@ -159,7 +158,7 @@ A</code></pre>
 <p>Use the function <code>pop.projection</code> to estimate population growth rates. Store the output as <code>detProj</code></p>
 <pre class="r"><code>detProj &lt;- pop.projection(A, n0, iterations=20+1)
 detProj</code></pre>
-<p>As you might remember, this function will start with your mean matrix and project it for 20 time steps (<code>iterations = 20+1</code>), i.e. it will project the equation <strong>n</strong>(t+1) = <strong>An</strong>(t) 20 times.</p>
+<p>This function will start with your mean matrix and project it for 20 time steps (<code>iterations = 20+1</code>), i.e. it will project the equation <strong>n</strong>(t+1) = <strong>An</strong>(t) 20 times.</p>
 <ol style="list-style-type: lower-alpha">
 <li>How would you describe the estimated development of the population over 20 years?</li>
 </ol>
@@ -167,15 +166,14 @@ detProj</code></pre>
 </div>
 <div id="a.-stochastic-analyses" class="section level4">
 <h4>2a. Stochastic analyses</h4>
-<p>Estimate the stochastic growth rate (<span class="math inline">\(\lambda_S\)</span>) using the <code>stoch.growth.rate</code> function. Store the output as e.g <code>stochProj</code></p>
-<p>Use all the annual matrices (i.e. the hudsonia data, not the mean matrix). The function will make a random draw with replacement for (in this case) 20 time steps.</p>
+<p>Estimate the stochastic growth rate (<span class="math inline">\(\lambda_S\)</span>) using the <code>stoch.growth.rate</code> function. Store the output as e.g <code>stochProj</code>. Use all the annual matrices (i.e. the hudsonia data, not the mean matrix). The function will make a random draw with replacement for (in this case) 20 time steps.</p>
 <pre class="r"><code>stochProj &lt;- stoch.growth.rate(hudsonia, maxt = 20+1)
 
 #Look at the output that you've stored in StochProj:
 
 stochProj</code></pre>
 <p><code>approx</code> and <code>sim</code> are both approximations of <span class="math inline">\(\lambda_S\)</span>, estimated with different methods (the first using an analytical method and the second using simulations). The two approximations differ from the deterministic growth rate from the previous part of the exercise.</p>
-<p>What you have estimated is actually <span class="math inline">\(\overline{r}\)</span>, the mean exponential growth rate (mean <em>r</em>). The stochastic growth rate is equivalent to mean exponential growth rate, <span class="math inline">\(\overline{r}\)</span>, and we can use this to convert our approximations into <span class="math inline">\(\lambda_S\)</span>.</p>
+<p>What you have estimated here is <span class="math inline">\(\overline{r}\)</span>, the mean exponential growth rate (mean <em>r</em>). The stochastic growth rate is equivalent to mean exponential growth rate, <span class="math inline">\(\overline{r}\)</span>, and we can use this to convert our approximations into <span class="math inline">\(\lambda_S\)</span>.</p>
 <p><span class="math inline">\(r = ln(\lambda)\)</span><br />
 And that <span class="math inline">\(\lambda = e^{r}\)</span></p>
 <p>In R, we can convert <span class="math inline">\(\overline{r}\)</span> to <span class="math inline">\(\lambda_S\)</span> like this:</p>
@@ -191,21 +189,22 @@ exp(stochProj$sim)</code></pre>
 lambda(hudsonia$A86)
 lambda(hudsonia$A87)
 lambda(hudsonia$A88)</code></pre>
-<p>… you will see that the projection matrix for 1987 is associated with the lowest growth rate.</p>
+<p>… you will see that the projection matrix for 1987 (year 3) is associated with the lowest growth rate.</p>
 <p>Let’s say that the low growth rate was due to increased disturbance (e.g trampling) by mountain climbers in that year. What would happen to our population if there was an increase in years when a lot of plants got trampled by tourists?</p>
 <p>In the hudsonia data, the third matrix contains vital rates for year 1987. Start by creating a vector with weights:</p>
-<pre class="r"><code>yearweight1 &lt;- c(1, 1, 2, 1)</code></pre>
+<pre class="r"><code>yearweight1 &lt;- c(1, 1, 2, 1) </code></pre>
 <p>Use the <code>stoch.projection</code> function to simulate population sizes for 20 years (<code>tmax</code>) and repeat it 1000 times (<code>nreps</code>). In this function, by applying a weight to the year 1987, you will increase the probability that the vital rates from the 1987 matrix will be used by the function to predict future population sizes.</p>
 <pre class="r"><code>WeightProj1 &lt;- stoch.projection(hudsonia, n0, tmax = 20+1,
 prob = yearweight1, nreps = 1000)</code></pre>
-<p>Compare with a scenario when less disturbance occurred</p>
+<p>Compare with a scenario when less disturbance occurred. That is, remove the possibility that the growth rate for 1987 (year 3) is used in the population projection.</p>
 <pre class="r"><code>yearweight2 &lt;- c(1, 1, 0, 1) # vector with weights
 
 #We set the weight for the third matrix (1987) to 0
 #i.e. we state that we don't want the  stoch.pop projection to draw
 #our negative growth rate from 1987
 
-WeightProj2 &lt;- stoch.projection(hudsonia, n0, tmax = 20+1, prob = yearweight2,nreps = 1000)</code></pre>
+WeightProj2 &lt;- stoch.projection(hudsonia, n0, tmax = 20+1, 
+                                prob = yearweight2,nreps = 1000)</code></pre>
 <p>Now you can compare the simulated population sizes graphically:</p>
 <pre class="r"><code>par(mfrow = c(2, 1))
 
@@ -227,7 +226,7 @@ abline(v = (sum(n0)), lty = 3)
 <h4>3. Quasi-extinction</h4>
 <p>Another approach to modelling populations is to estimate the probability of quasi-extinction.</p>
 <ol start="6" style="list-style-type: lower-alpha">
-<li>Why are we using a quasi-extinction threshold rather than estimating the probability of actual extinction (n=0)?</li>
+<li>Why do you think we are using a quasi-extinction threshold rather than estimating the probability of actual extinction (n=0)?</li>
 </ol>
 <p>You can use the <code>stoch.quasi.ext</code> function to estimate the probability of the population size falling under a quasi-extinction threshold over time.<br />
 First, decide on a quasi-extinction threshold. In the code below, I have used 2000 individuals as an arbitrary threshold (<code>Nx=2000</code>). Let the <code>stoch.quasi.ext</code> function project population sizes 20 years to the future (<code>tmax = 20+1</code>) and calculate the cumulative probability of quasi-extinction 10 times (<code>maxruns = 10</code>). Each probability density function will be estimated from 500 simulations of population sizes (<code>nreps = 500</code>) over 20 time steps.</p>
@@ -235,17 +234,23 @@ First, decide on a quasi-extinction threshold. In the code below, I have used 20
                            tmax = 20+1, maxruns = 10, nreps = 500, verbose = FALSE)</code></pre>
 <p>Plot your output (probability density functions of quasi-extinction over time):</p>
 <pre class="r"><code>par(mfrow = c(1, 1))
-matplot(obsdata, ylab = &quot;Quasi-extinction probability&quot;, type = &quot;l&quot;, ylim=c(0,1), lty = 1
-        , col = rainbow(10), las = 1, main = &quot;Observed Data&quot;, xlab = &quot;Years&quot;)</code></pre>
+matplot(obsdata, ylab = &quot;Quasi-extinction probability&quot;, 
+        type = &quot;l&quot;, ylim=c(0,1), lty = 1, 
+        col = rainbow(10), las = 1, 
+        main = &quot;Observed Data&quot;, xlab = &quot;Years&quot;)</code></pre>
 <ol start="7" style="list-style-type: lower-alpha">
-<li>Do you find it likely that the population size will fall under the quasi-extinction threshold in the next 20 years?</li>
+<li>How likely is it that the population size will fall under the quasi-extinction threshold in the next 20 years?</li>
 </ol>
 <p>You can also add weights by using the <code>prob</code> argument, e.g. for year 1987 when we assume that population growth rate decreased due to disturbance by humans:</p>
-<pre class="r"><code>weightsdata &lt;- stoch.quasi.ext(hudsonia, n0, prob = c(1, 1, 2, 1), Nx = 2000, tmax = 20+1
-                               , maxruns = 10, nreps = 500,verbose = FALSE)
+<pre class="r"><code>weightsdata &lt;- stoch.quasi.ext(hudsonia, n0, prob = c(1, 1, 2, 1), 
+                               Nx = 2000, tmax = 20+1, 
+                               maxruns = 10, nreps = 500,
+                               verbose = FALSE)
 
-matplot(weightsdata, ylab = &quot;Quasi-extinction probability&quot;, type = &quot;l&quot;,ylim=c(0,1), lty = 1
-        , col = rainbow(10), las = 1, main = &quot;Disturbance&quot;, xlab = &quot;Years&quot;)</code></pre>
+matplot(weightsdata, ylab = &quot;Quasi-extinction probability&quot;, 
+        type = &quot;l&quot;,ylim=c(0,1), lty = 1, 
+        col = rainbow(10), las = 1, 
+        main = &quot;More disturbance&quot;, xlab = &quot;Years&quot;)</code></pre>
 <ol start="8" style="list-style-type: lower-alpha">
 <li>How would an increase mountain tourism affect the probability of extinction (assuming that increased tourism means increased disturbance, and decreased growth rate, for the <em>H. montanta</em> populations)?</li>
 </ol>

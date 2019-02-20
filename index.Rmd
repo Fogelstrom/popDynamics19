@@ -13,8 +13,6 @@ Here's code and instructions for the practical tasks for the session "Population
 
 [Sensitivities and elasticities](Activity/SensitivitiesAndElasticities.html)  
 
-[Calculate stochastic growth rate](Activity/stochasticGrowthRate.html)  
-
 [Population viability analysis (PVA)](Activity/PopulationViabilityAnalysis.html)  
 
 If you want an extra exercise, try performing a [count-based PVA for the Yellowstone grizzly population](http://www.montana.edu/screel/teaching/bioe-440r-521/course-outline/count-based-PVA-grizzly-data.R)
