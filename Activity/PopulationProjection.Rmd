@@ -154,7 +154,7 @@ n2
 sum(n2) 	# To get total number of individuals 
 
 # To view the proportional distribution among classes: 
-n0/sum(n2) 	
+n2/sum(n2) 	
 ```
   
 Now, we will **predict the future growth** of this population and **estimate the (long term) growth rate $\lambda$** by calculating $\lambda$ for each time step.
@@ -204,10 +204,10 @@ propN = N/totN
 Let's tie our calculations togehter in a table:  
 
 ```{r eval = FALSE}
-table1 <- cbind(years, propN[2:31,], totN[2:31], Lambdas)
+table1 <- cbind(1:years, propN[2:31,], totN[2:31], Lambdas)
 colnames(table1) = c("year", "prop pre-\njuveniles", "prop \njuveniles", 
                      "prop adults", "total N", "lambda")
-knitr::kable(table1, digits = 4)
+knitr::kable(table1, digits = 4) #requires installation of package 'knitr'
 ```
 
 * How long does it take to reach the stable stage distribution?  

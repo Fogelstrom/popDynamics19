@@ -98,6 +98,9 @@ img {
 button.code-folding-btn:focus {
   outline: none;
 }
+summary {
+  display: list-item;
+}
 </style>
 
 
@@ -105,9 +108,70 @@ button.code-folding-btn:focus {
 <div class="container-fluid main-container">
 
 <!-- tabsets -->
+
+<style type="text/css">
+.tabset-dropdown > .nav-tabs {
+  display: inline-table;
+  max-height: 500px;
+  min-height: 44px;
+  overflow-y: auto;
+  background: white;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+}
+
+.tabset-dropdown > .nav-tabs > li.active:before {
+  content: "";
+  font-family: 'Glyphicons Halflings';
+  display: inline-block;
+  padding: 10px;
+  border-right: 1px solid #ddd;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li.active:before {
+  content: "";
+  border: none;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open:before {
+  content: "";
+  font-family: 'Glyphicons Halflings';
+  display: inline-block;
+  padding: 10px;
+  border-right: 1px solid #ddd;
+}
+
+.tabset-dropdown > .nav-tabs > li.active {
+  display: block;
+}
+
+.tabset-dropdown > .nav-tabs > li > a,
+.tabset-dropdown > .nav-tabs > li > a:focus,
+.tabset-dropdown > .nav-tabs > li > a:hover {
+  border: none;
+  display: inline-block;
+  border-radius: 4px;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li {
+  display: block;
+  float: none;
+}
+
+.tabset-dropdown > .nav-tabs > li {
+  display: none;
+}
+</style>
+
 <script>
 $(document).ready(function () {
   window.buildTabsets("TOC");
+});
+
+$(document).ready(function () {
+  $('.tabset-dropdown > .nav-tabs > li').click(function () {
+    $(this).parent().toggleClass('nav-tabs-open')
+  });
 });
 </script>
 
@@ -120,7 +184,6 @@ $(document).ready(function () {
   window.initializeCodeFolding("show" === "show");
 });
 </script>
-
 
 
 
@@ -233,7 +296,7 @@ n2
 sum(n2)     # To get total number of individuals 
 
 # To view the proportional distribution among classes: 
-n0/sum(n2)  </code></pre>
+n2/sum(n2)  </code></pre>
 <p>Now, we will <strong>predict the future growth</strong> of this population and <strong>estimate the (long term) growth rate <span class="math inline">\(\lambda\)</span></strong> by calculating <span class="math inline">\(\lambda\)</span> for each time step.</p>
 <p>At some point <span class="math inline">\(\lambda\)</span> and the proportion of individuals in each life-stage will stabilize. This is called the <strong>stable stage distribution</strong>. Will find out how long it takes to reach the stable stage distribution. (We will consider <span class="math inline">\(\lambda\)</span> stable when the first four decimal places have stabilised (i.e. are unchanged among iterations)).</p>
 <p>We can do this by repeating the commands given above over and over but it’s more efficient to create a for-loop that that does the calculations automatically. Let’s project the population 30 years into the future:</p>
@@ -262,10 +325,10 @@ for (t in 1:years) { N[t+1,] = A %*% N[t,] }
 <p>To find out what the stable stage distribution looks like, calculate the proportion of individuals in each class for each time step:</p>
 <pre class="r"><code>propN = N/totN</code></pre>
 <p>Let’s tie our calculations togehter in a table:</p>
-<pre class="r"><code>table1 &lt;- cbind(years, propN[2:31,], totN[2:31], Lambdas)
+<pre class="r"><code>table1 &lt;- cbind(1:years, propN[2:31,], totN[2:31], Lambdas)
 colnames(table1) = c(&quot;year&quot;, &quot;prop pre-\njuveniles&quot;, &quot;prop \njuveniles&quot;, 
                      &quot;prop adults&quot;, &quot;total N&quot;, &quot;lambda&quot;)
-knitr::kable(table1, digits = 4)</code></pre>
+knitr::kable(table1, digits = 4) #requires installation of package 'knitr'</code></pre>
 <ul>
 <li><p>How long does it take to reach the stable stage distribution?</p></li>
 <li><p>What is the stable stage distribution (what proportion of the population are in the three different life-stages)?</p></li>
