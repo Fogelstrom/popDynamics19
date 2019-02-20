@@ -16,3 +16,8 @@ Here's code and instructions for the practical tasks for the session "Population
 [Population viability analysis (PVA)](Activity/PopulationViabilityAnalysis.html)  
 
 If you want an extra exercise, try performing a [count-based PVA for the Yellowstone grizzly population](http://www.montana.edu/screel/teaching/bioe-440r-521/course-outline/count-based-PVA-grizzly-data.R)
+
+```{r include=FALSE, eval=FALSE}
+#Here's the [Assignment for today's session](Activity/Assignment.html)  
+```
+
